@@ -19,7 +19,7 @@ def teardown_storage(*args):
 @app.errorhandler(404)
 def handle_error(*args):
     """"handles 404 errors"""
-    return jsonify({"error": "Not found"})
+    return jsonify({"error": "Not found"}), 404
 
 
 if __name__ == '__main__':
