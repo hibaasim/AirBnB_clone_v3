@@ -78,11 +78,70 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_all_no_class(self):
         """Test that all returns all rows when no class is passed"""
+        state_data = {'name': 'Khartoum'}
+        new_state = State(**state_data)
+        models.storage.new(new_state)
+        models.storage.save()
+
+        session = models.storage._DBStorage__session
+        all_obj = session.query(State).all()
+        self.assertTrue(len(all_obj) > 0)
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_new(self):
         """test that new adds an object to the database"""
+        state_data = {'name': 'Khartoum'}
+        new_state = State(**state_data)
+        models.storage.new(new_state)
+
+        session = models.storage._DBStorage__session
+        found = session.qurey(State).filter_by(id=new_state.id).first
+        self.assertEqual(found.id, new_state.id)
+        self.assertEqual(found.name, new_state.name)
+        self.assertIsNotNone(found)
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
+        state_data = {'name': 'Khartoum'}
+        new_state = State(**state_data)
+        models.storage.new(new_state)
+        models.storage.save()
+
+        session = models.storage._DBStorage__session
+        found = session.qurey(State).filter_by(id=new_state.id).first
+        self.assertEqual(found.id, new_state.id)
+        self.assertEqual(found.name, new_state.name)
+        self.assertIsNotNone(found)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get(self):
+        """Test that get method gets an instance from dbstorage correctly"""
+        storage = models.storage
+        storage.reload()
+        state_data = {'name': 'Khartoum'}
+        state_inst = State(**state_data)
+        storage.new(state_inst)
+        storage.save()
+        found = storage.get(State, state_inst.id)
+        self.assertEqual(state_inst, found)
+
+        fake_state_id = storage.get(State, 'fake_id')
+        self.assertEqual(fake_state_id, None)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_count(self):
+        """Tests that count correctly counts the number of instances"""
+        storage = models.storage
+        storage.reload()
+        state_data = {'name': 'Khartoum'}
+        state_inst = State(**state_data)
+        storage.new(state_inst)
+
+        city_data = {'name': 'Bahri', 'state_id': state_inst.id}
+        city_inst = City(**city_data)
+        storage.new(city_inst)
+        storage.save()
+
+        c = storage.count()
+        self.assertEqual(c, len(storage.all()))

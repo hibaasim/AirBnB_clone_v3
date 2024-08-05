@@ -72,7 +72,7 @@ class FileStorage:
     def get(self, cls, id):
         """Retrieves an object if present based on cls and id"""
         if cls and id:
-            if cls in classes.values() and isinstance (id, str):
+            if cls in classes.values() and isinstance(id, str):
                 all_obj = self.all(cls)
                 for value in all_obj.values():
                     if value.id == id:
@@ -81,7 +81,7 @@ class FileStorage:
                 return
         else:
             return
-        
+
     def count(self, cls=None):
         """counts the number of objects in storage"""
         if cls in classes.values():
