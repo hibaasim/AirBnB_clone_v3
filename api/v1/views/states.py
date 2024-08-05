@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """  handles all default RESTFul API actions """
 #use to_dict() somwhere
-from flask import jsonify, request
+from flask import jsonify, request, abort
 from models import storage
 from models.state import State
 from api.v1.views import app_views
@@ -15,7 +15,7 @@ def get_all():
 
 
 @app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
-def get_id():
+def get_id(state_id):
     '''gets state according to id'''
     state = storage.get(State, state_id)
     if state:
@@ -25,7 +25,7 @@ def get_id():
 
 
 @app_views.route('/states/<state_id>', methods=['DELETE'], strict_slashes=False)
-def del_id():
+def del_id(state_id):
     '''deletes state according to id'''
     state = storage.get(State, state_id)
     if state:
@@ -39,10 +39,10 @@ def del_id():
 @app_views.route('/states', methods=['POST'], strict_slashes=False)
 def create_state():
     ''' creates a new state'''
-    state = request.get_json
-    if not request.is_json or not state:
+    state = request.get_json()
+    if not state:
         abort(400, description="Not a JSON")
-    if not 'name' in state:
+    if 'name' not in state:
         abort(400, description="Missing name")
     else:
         new_state = State(**state)
@@ -51,14 +51,14 @@ def create_state():
 
 
 @app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
-def update_state():
+def update_state(state_id):
     ''' updates an existing state'''
     ignore = ['id', 'created_at', 'updated_at']
 
     state = storage.get(State, state_id)
     if state:
-        new_info = request.get_json
-        if not request.is_json or not new_info:
+        new_info = request.get_json()
+        if not new_info:
             abort(400, description="Not a JSON")
 
         for key, value in new_info.items():
