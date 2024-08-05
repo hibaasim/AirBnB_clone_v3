@@ -95,7 +95,7 @@ class TestFileStorage(unittest.TestCase):
         models.storage.new(new_state)
 
         session = models.storage._DBStorage__session
-        found = session.qurey(State).filter_by(id=new_state.id).first
+        found = session.query(State).filter_by(id=new_state.id).first
         self.assertEqual(found.id, new_state.id)
         self.assertEqual(found.name, new_state.name)
         self.assertIsNotNone(found)
@@ -109,7 +109,7 @@ class TestFileStorage(unittest.TestCase):
         models.storage.save()
 
         session = models.storage._DBStorage__session
-        found = session.qurey(State).filter_by(id=new_state.id).first
+        found = session.query(State).filter_by(id=new_state.id).first
         self.assertEqual(found.id, new_state.id)
         self.assertEqual(found.name, new_state.name)
         self.assertIsNotNone(found)
