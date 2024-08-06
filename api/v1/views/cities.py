@@ -10,7 +10,7 @@ from api.v1.views import app_views
 
 @app_views.route('/states/<state_id>/cities',
                  methods=['GET'], strict_slashes=False)
-def get_all(state_id):
+def get_cities(state_id):
     '''gets all cities of a state'''
     state = storage.get(State, state_id)
     if not state:
@@ -20,7 +20,7 @@ def get_all(state_id):
 
 
 @app_views.route('/cities/<city_id>', methods=['GET'], strict_slashes=False)
-def get_id(city_id):
+def get_city(city_id):
     '''gets city according to id'''
     city = storage.get(City, city_id)
     if city:
@@ -30,7 +30,7 @@ def get_id(city_id):
 
 
 @app_views.route('/cities/<city_id>', methods=['DELETE'], strict_slashes=False)
-def del_id(city_id):
+def del_city(city_id):
     '''deletes city according to id'''
     city = storage.get(City, city_id)
     if city:
