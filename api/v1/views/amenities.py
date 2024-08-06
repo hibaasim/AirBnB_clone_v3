@@ -15,7 +15,8 @@ def get_aamenities():
     return jsonify(amenity_list)
 
 
-@app_views.route('/amenities/<amenity_id>', methods=['GET'], strict_slashes=False)
+@app_views.route('/amenities/<amenity_id>',
+                 methods=['GET'], strict_slashes=False)
 def get_amenity(amenity_id):
     '''gets amenity according to id'''
     amenity = storage.get(Amenity, amenity_id)
@@ -25,50 +26,51 @@ def get_amenity(amenity_id):
         abort(404)
 
 
-@app_views.route('/states/<state_id>',
+@app_views.route('/amenities/<amenity_id>',
                  methods=['DELETE'], strict_slashes=False)
-def del_amenity(state_id):
+def del_amenity(amenity_id):
     '''deletes state according to id'''
-    state = storage.get(State, state_id)
-    if state:
-        storage.delete(state)
+    amenity = storage.get(Amenity, amenity_id)
+    if amenity:
+        storage.delete(amenity)
         storage.save()
         return jsonify({}), 200
     else:
         abort(404)
 
 
-@app_views.route('/states', methods=['POST'], strict_slashes=False)
+@app_views.route('/amenities', methods=['POST'], strict_slashes=False)
 def create_amenity():
     ''' creates a new state'''
-    state = request.get_json()
-    if not state or request.content_type != 'application/json':
+    data = request.get_json()
+    if not amenity or request.content_type != 'application/json':
         abort(400, description="Not a JSON")
-    if 'name' not in state:
+    if 'name' not in amenity:
         abort(400, description="Missing name")
     else:
-        new_state = State(**state)
-        new_state.save()
-        return jsonify(new_state.to_dict()), 201
+        new_amenity = Amenity(**data)
+        new_amenity.save()
+        return jsonify(new_amenity.to_dict()), 201
 
 
-@app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
-def update_amenity(state_id):
-    ''' updates an existing state'''
+@app_views.route('/amenities/<amenity_id>',
+                 methods=['PUT'], strict_slashes=False)
+def update_amenity(amenity_id):
+    ''' updates an existing amenity'''
     ignore = ['id', 'created_at', 'updated_at']
 
     if request.content_type != 'application/json':
         abort(400, description="Not a JSON")
-    state = storage.get(State, state_id)
-    if state:
+    amenity = storage.get(Amenity, amenity_id)
+    if amenity:
         new_info = request.get_json()
         if not new_info:
             abort(400, description="Not a JSON")
 
         for key, value in new_info.items():
             if key not in ignore:
-                setattr(state, key, value)
-        state.save()
-        return jsonify(state.to_dict()), 200
+                setattr(amenity, key, value)
+        amenity.save()
+        return jsonify(amenity.to_dict()), 200
     else:
         abort(404)
