@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 """  handles all default RESTFul API actions """
-#use to_dict() somwhere
+
 from flask import jsonify, request, abort
 from models import storage
 from models.state import State
 from api.v1.views import app_views
+
 
 @app_views.route('/states', methods=['GET'], strict_slashes=False)
 def get_all():
@@ -24,7 +25,8 @@ def get_id(state_id):
         abort(404)
 
 
-@app_views.route('/states/<state_id>', methods=['DELETE'], strict_slashes=False)
+@app_views.route('/states/<state_id>',
+                 methods=['DELETE'], strict_slashes=False)
 def del_id(state_id):
     '''deletes state according to id'''
     state = storage.get(State, state_id)
@@ -40,7 +42,7 @@ def del_id(state_id):
 def create_state():
     ''' creates a new state'''
     state = request.get_json()
-    if not state:
+    if not state or request.content_type != 'application/json':
         abort(400, description="Not a JSON")
     if 'name' not in state:
         abort(400, description="Missing name")
@@ -55,6 +57,8 @@ def update_state(state_id):
     ''' updates an existing state'''
     ignore = ['id', 'created_at', 'updated_at']
 
+    if request.content_type != 'application/json':
+        abort(400, description="Not a JSON")
     state = storage.get(State, state_id)
     if state:
         new_info = request.get_json()
