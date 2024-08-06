@@ -8,7 +8,7 @@ from api.v1.views import app_views
 
 
 @app_views.route('/amenities', methods=['GET'], strict_slashes=False)
-def get_aamenities():
+def get_amenities():
     '''gets all amenities'''
     amenities = storage.all(Amenity).values()
     amenity_list = [amenity.to_dict() for amenity in amenities]
@@ -43,9 +43,9 @@ def del_amenity(amenity_id):
 def create_amenity():
     ''' creates a new state'''
     data = request.get_json()
-    if not amenity or request.content_type != 'application/json':
+    if not data or request.content_type != 'application/json':
         abort(400, description="Not a JSON")
-    if 'name' not in amenity:
+    if 'name' not in data:
         abort(400, description="Missing name")
     else:
         new_amenity = Amenity(**data)
